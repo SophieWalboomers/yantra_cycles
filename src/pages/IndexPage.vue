@@ -47,6 +47,8 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+import meanings from 'src/data/cycleInfo.json'
+
 const birthday = ref('')
 
 const month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) : null))
@@ -85,9 +87,13 @@ const cycleColumns = computed(() => [
 const cycleRows = computed(() => [
   {
     id: 1,
-    year: 'Your year-cycle info here',
-    month: 'Your month-cycle info here',
-    day: 'Your day-cycle info here',
+    year: yearCycle.value
+      ? (meanings?.[String(yearCycle.value)] ?? 'No text yet for this cycle')
+      : '',
+    month: monthCycle.value
+      ? (meanings?.[String(monthCycle.value)] ?? 'No text yet for this cycle')
+      : '',
+    day: dayCycle.value ? (meanings?.[String(dayCycle.value)] ?? 'No text yet for this cycle') : '',
   },
 ])
 </script>
