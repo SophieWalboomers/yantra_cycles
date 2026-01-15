@@ -28,6 +28,15 @@
           >-cycle day
         </div>
       </div>
+      <q-table
+        class="q-mt-lg q-px-lg"
+        flat
+        hide-bottom
+        separator="vertical"
+        :rows="cycleRows"
+        :columns="cycleColumns"
+        row-key="id"
+      />
     </template>
 
     <template v-else-if="showResult && !birthday">
@@ -66,4 +75,19 @@ function calculate() {
 
   showResult.value = true
 }
+
+const cycleColumns = computed(() => [
+  { name: 'year', label: `${yearCycle.value}-year`, field: 'year', align: 'center' },
+  { name: 'month', label: `${monthCycle.value}-month`, field: 'month', align: 'center' },
+  { name: 'day', label: `${dayCycle.value}-day`, field: 'day', align: 'center' },
+])
+
+const cycleRows = computed(() => [
+  {
+    id: 1,
+    year: 'Your year-cycle info here',
+    month: 'Your month-cycle info here',
+    day: 'Your day-cycle info here',
+  },
+])
 </script>
