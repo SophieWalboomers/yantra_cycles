@@ -7,7 +7,13 @@
 
     <q-card flat class="q-pa-md">
       <div class="text-subtitle2 q-mb-sm">Select your birthday</div>
-      <q-date v-model="birthday" mask="YYYY-MM-DD" minimal />
+      <q-date
+        v-model="birthday"
+        mask="YYYY-MM-DD"
+        minimal
+        navigation-type="select"
+        :options="pastDatesOnly"
+      />
     </q-card>
 
     <q-btn label="Calculate cycles" color="primary" @click="calculate" />
@@ -64,16 +70,25 @@ watch(birthday, () => {
   showResult.value = false
 })
 
+function pastDatesOnly(date) {
+  const today = new Date()
+  const [year, month, day] = date.split('/').map(Number)
+
+  const selectedDate = new Date(year, month - 1, day)
+
+  return selectedDate < today
+}
+
 function mod9to1(n) {
   return ((((n - 1) % 9) + 9) % 9) + 1
 }
 
 function calculate() {
-  const now = new Date()
+  const today = new Date()
 
-  yearCycle.value = mod9to1(month.value + day.value + now.getFullYear() + 1)
-  monthCycle.value = mod9to1(yearCycle.value - (7 - (now.getMonth() + 1)))
-  dayCycle.value = mod9to1(monthCycle.value + now.getDate())
+  yearCycle.value = mod9to1(month.value + day.value + today.getFullYear() + 1)
+  monthCycle.value = mod9to1(yearCycle.value - (7 - (today.getMonth() + 1)))
+  dayCycle.value = mod9to1(monthCycle.value + today.getDate())
 
   showResult.value = true
 }
