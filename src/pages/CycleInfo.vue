@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
-    <div v-if="cycle" class="text-h5">{{ cycle.info }}</div>
-    <div v-else class="text-body1">No cycle found.</div>
+    <div v-if="cycle" class="text-h5 text-center">{{ cycle.info }}</div>
+    <div v-else class="text-body1">No cycle info found.</div>
   </q-page>
 </template>
 
@@ -31,7 +31,5 @@ const cycleId = computed(() => Number(route.params.cycleId))
 watchEffect(async () => {
   cycle.value = null
   cycle.value = cyclesDb.find((x) => x.index === cycleId.value) ?? null
-  console.log(cycle.value?.index)
-  console.log(cycle.value?.info)
 })
 </script>

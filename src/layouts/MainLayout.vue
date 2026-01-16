@@ -1,9 +1,9 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hhh Lpr lFf">
     <q-header elevated class="text-black" style="background-color: white">
       <q-toolbar style="height: 6rem">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title> Yantra cycle calculator </q-toolbar-title>
+        <q-toolbar-title>Yantra cycle calculator</q-toolbar-title>
         <div class="absolute-center">
           <EssentialLink to="/">
             <img
@@ -17,7 +17,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer v-model="leftDrawerOpen" bordered overlay>
       <q-list>
         <q-item-label header> Information per cycle number </q-item-label>
 
@@ -44,7 +44,6 @@ const linksList = Array.from({ length: 9 }, (_, i) => {
 })
 
 const leftDrawerOpen = ref(false)
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
