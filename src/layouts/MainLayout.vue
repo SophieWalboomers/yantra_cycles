@@ -22,6 +22,9 @@
         <q-item-label header> Information per cycle number </q-item-label>
 
         <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <q-item-label header> Other </q-item-label>
+
+        <EssentialLink title="Extra Resources on Yantra Yoga" to="yantra-info" />
       </q-list>
     </q-drawer>
 

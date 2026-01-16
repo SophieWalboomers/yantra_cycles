@@ -8,6 +8,7 @@ const routes = [
         path: 'cycle-:cycleId(\\d+)',
         component: () => import('pages/CycleInfo.vue'),
       },
+      { path: 'yantra-info', component: () => import('pages/InfoPage.vue') },
     ],
   },
 
