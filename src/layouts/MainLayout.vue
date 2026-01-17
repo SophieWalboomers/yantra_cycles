@@ -3,7 +3,7 @@
     <q-header elevated class="text-black" style="background-color: white">
       <q-toolbar style="height: 6rem">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title>Yantra cycle calculator</q-toolbar-title>
+        <q-toolbar-title>Vedic Numerology / Ank Jyotish Calculator</q-toolbar-title>
         <div class="absolute-center">
           <EssentialLink to="/">
             <img
@@ -19,12 +19,11 @@
 
     <q-drawer v-model="leftDrawerOpen" bordered overlay>
       <q-list>
+        <EssentialLink title="Home" to="/" exact />
+        <EssentialLink title="About" to="yantra-info" />
         <q-item-label header> Information per cycle number </q-item-label>
 
         <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-        <q-item-label header> Other </q-item-label>
-
-        <EssentialLink title="Extra Resources on Yantra Yoga" to="yantra-info" />
       </q-list>
     </q-drawer>
 
