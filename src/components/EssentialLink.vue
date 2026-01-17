@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="props.to">
+  <q-item clickable v-bind="linkProps">
     <template v-if="$slots.default">
       <slot />
     </template>
@@ -18,10 +18,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   title: {
     type: String,
-    required: true,
+    default: '',
   },
 
   caption: {
@@ -31,9 +33,9 @@ const props = defineProps({
 
   to: [String, Object],
 
-  link: {
+  href: {
     type: String,
-    default: '#',
+    default: '',
   },
 
   icon: {
@@ -41,4 +43,10 @@ const props = defineProps({
     default: '',
   },
 })
+const external = computed(() => !!props.href)
+const linkProps = computed(() =>
+  external.value
+    ? { href: props.href, target: '_blank', rel: 'noopener noreferrer' }
+    : { to: props.to },
+)
 </script>
