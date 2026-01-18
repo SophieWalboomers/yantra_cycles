@@ -1,11 +1,19 @@
 <template>
   <q-page class="column items-center">
     <q-separator class="q-my-lg" />
-    <div class="text-body1">Calculate your Yantra cycles!</div>
+    <div class="text-body1 text-italic">
+      “Until you make the unconscious conscious, <br />
+      it will direct your life and you will call it fate.”
+    </div>
+    <div class="q-pb-md">― C.G. Jung</div>
+    <div class="text-body1">
+      Understand the energies impacting you right now, to unlock your highest potential and live
+      your Dharma.
+    </div>
 
     <q-separator class="q-my-lg" />
 
-    <q-card flat class="q-pa-md">
+    <q-card flat>
       <div class="text-subtitle2 q-mb-sm">Select your birthday</div>
       <q-date
         v-model="birthday"
@@ -16,10 +24,13 @@
       />
     </q-card>
 
-    <q-btn label="Calculate cycles" color="primary" @click="calculate" />
+    <q-btn color="primary" @click="calculate">
+      Calculate <br />
+      energetic influences</q-btn
+    >
 
     <template v-if="showResult && birthday">
-      <div class="text-body1 q-my-lg">
+      <!--<div class="text-body1 q-my-lg">
         You are currently in a
         <div>
           <b>{{ yearCycle }}</b
@@ -33,16 +44,42 @@
           <b>{{ dayCycle }}</b
           >-cycle day
         </div>
-      </div>
+      </div>-->
       <q-table
         class="q-mt-lg q-px-lg"
         flat
         hide-bottom
-        separator="vertical"
+        separator="cell"
         :rows="cycleRows"
         :columns="cycleColumns"
         row-key="id"
-      />
+        :style="{
+          width: $q.screen.gt.sm ? '50%' : '100%',
+        }"
+      >
+        <template #body="props">
+          <q-tr :props="props">
+            <q-td
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              style="white-space: normal; overflow-wrap: anywhere;text-align:left;'"
+            >
+              <!-- Row 1: render lists -->
+              <template v-if="Array.isArray(props.row[col.name])">
+                <div v-for="(word, i) in props.row[col.name]" :key="i" style="text-align: center">
+                  {{ word }}
+                </div>
+              </template>
+
+              <!-- Other rows: render text -->
+              <template v-else>
+                {{ props.row[col.name] }}
+              </template>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </template>
 
     <template v-else-if="showResult && !birthday">
@@ -94,21 +131,32 @@ function calculate() {
 }
 
 const cycleColumns = computed(() => [
-  { name: 'year', label: `${yearCycle.value}-year`, field: 'year', align: 'center' },
-  { name: 'month', label: `${monthCycle.value}-month`, field: 'month', align: 'center' },
-  { name: 'day', label: `${dayCycle.value}-day`, field: 'day', align: 'center' },
+  {
+    name: 'year',
+    label: `Year cycle: ${yearCycle.value}`,
+    align: 'center',
+  },
+  { name: 'month', label: `Month cycle: ${monthCycle.value}`, align: 'center' },
+  { name: 'day', label: `Day cycle: ${dayCycle.value}`, align: 'center' },
 ])
 
-const cycleRows = computed(() => [
-  {
-    id: 1,
-    year: yearCycle.value
-      ? (meanings?.[String(yearCycle.value)] ?? 'No text yet for this cycle')
-      : '',
-    month: monthCycle.value
-      ? (meanings?.[String(monthCycle.value)] ?? 'No text yet for this cycle')
-      : '',
-    day: dayCycle.value ? (meanings?.[String(dayCycle.value)] ?? 'No text yet for this cycle') : '',
-  },
-])
+const cycleRows = computed(() => {
+  const yearObj = meanings?.[String(yearCycle.value)]
+  const monthObj = meanings?.[String(monthCycle.value)]
+  const dayObj = meanings?.[String(dayCycle.value)]
+  return [
+    {
+      id: 1,
+      year: yearCycle.value ? yearObj.keywords : [],
+      month: monthCycle.value ? monthObj.keywords : [],
+      day: dayCycle.value ? dayObj.keywords : [],
+    },
+    {
+      id: 2,
+      year: yearCycle.value ? yearObj.summary : '',
+      month: monthCycle.value ? monthObj.summary : '',
+      day: dayCycle.value ? dayObj.summary : '',
+    },
+  ]
+})
 </script>

@@ -1,11 +1,106 @@
 {
-  "1": "Cycle 1 meaning...",
-  "2": "Cycle 2 meaning...",
-  "3": "Cycle 3 meaning...",
-  "4": "Cycle 4 meaning...",
-  "5": "Cycle 5 meaning...",
-  "6": "Cycle 6 meaning...",
-  "7": "Cycle 7 meaning...",
-  "8": "Cycle 8 meaning...",
-  "9": "Cycle 9 meaning..."
+  "1": {
+    "keywords": ["Seeding", "Planting", "Planning"],
+    "summary": "This cycle marks the ambitious and creative beginning where new intentions are planted and hard work sets long-term karmic processes in motion.",
+    "description": [
+      "The point of initiation. A moment to begin planting something new.",
+      "Symbolizes the first unit (year, month, or day) within a nine-part cycle.",
+      "Motivation arises to act on the physical plane.",
+      "What is initiated here—whether consciously or unconsciously, positively or negatively—will unfold across nine cycles. These karmic seeds must eventually be harvested, so choose with care.",
+      "This opening cycle carries strong positivity, ambition, creativity, and a pioneering spirit. Embrace it fully.",
+      "Take pleasure in dedicating effort toward what you love and intend to bring into form."
+    ]
+  },
+  "2": {
+    "keywords": ["Germination", "Watering", "Socialising"],
+    "summary": "This phase focuses on connection and relational growth as emerging ideas interact with their environment and are shaped by others.",
+    "description": [
+      "A phase of connection and outreach, where the sprout breaks free and begins engaging with its environment.",
+      "On a human level, this period invites us to understand relationships, move beyond pure individuality, and explore our role within a wider social fabric.",
+      "Although development is slower than in the first cycle, growth and expansion continue.",
+      "During this time, we are more strongly affected by the energies and perspectives of others."
+    ]
+  },
+  "3": {
+    "keywords": ["Sprouting", "Materialisation", "Transformation"],
+    "summary": "A dynamic and creative phase of outward momentum where transformation accelerates, requiring both action and later introspection to avoid burnout.",
+    "description": [
+      "A period of activation and forward momentum.",
+      "The central theme is the transformation of outdated patterns as we process and integrate what has been learned up to this point.",
+      "This is an energetic, lively, and generally uplifting time.",
+      "Letting go of elements from the past can feel difficult, yet it ultimately leads to greater clarity and light.",
+      "Creative energy and optimism are especially strong.",
+      "The second half of this cycle brings a decline in energy, so moderation is essential to prevent exhaustion. Make the most of the initial surge.",
+      "Energy moves outward during this phase, favoring tangible action and engagement with the physical world.",
+      "The latter half encourages self-reflection and inner review. Avoid pushing forward relentlessly, as this can lead to burnout."
+    ]
+  },
+  "4": {
+    "keywords": ["Pruning", "Testing", "Resting"],
+    "summary": "This inward-facing cycle emphasizes healing, rest, and intuitive reflection to clear obstacles and support authentic growth.",
+    "description": [
+      "The call is toward self-reflection. A time to clear away what no longer serves.",
+      "This phase supports healing and purification on multiple levels, bringing attention to subtle factors that may be limiting growth.",
+      "Emotional sensitivity tends to be heightened during this period.",
+      "An opportunity to open inwardly and place trust in intuitive guidance.",
+      "Past karma may surface for resolution. Turning inward is necessary to address it.",
+      "True and sustainable growth emerges as a result.",
+      "A period that favors rest and gentleness with the body. Avoid excessive intensity or strain.",
+      "Practices such as fasting, cleansing, and conscious breathing are beneficial.",
+      "Remain connected to the inner realm, where deep and meaningful insights can be found."
+    ]
+  },
+  "5": {
+    "keywords": ["Rapid Growth", "Expansion", "Momentum"],
+    "summary": "This is a fast-moving and change-oriented phase of exploration, communication, and expansion that requires grounding to remain productive.",
+    "description": [
+      "A phase of outward expansion and reaching further—new ideas, fresh visions, and novel experiences emerge.",
+      "This period (year, month, or day) centers on change and finally acting on intentions that were previously postponed.",
+      "Highly inspirational energy is present, making grounding and realism essential. When balanced, significant progress can be achieved—break free and move forward.",
+      "Often associated with travel, relocation, or pursuing unfamiliar paths.",
+      "Clear expression and effective communication are important now—speak what needs to be spoken, but do so thoughtfully.",
+      "Remain aware of the tendency toward mental overactivity and an overload of ideas."
+    ]
+  },
+  "6": {
+    "keywords": ["Budding", "Stabilising", "Balancing"],
+    "summary": "This cycle centers on balance, resolution, and informed decision-making as emerging outcomes become visible but not yet complete.",
+    "description": [
+      "A time to restore mental equilibrium, access a broader perspective, and make decisions guided by higher awareness.",
+      "Well-suited for resolving unfinished matters, whether related to relationships, finances, or family concerns.",
+      "This phase asks for comprehension and the attainment of inner resolution across all areas of life.",
+      "Intuition and rational thought come together to clarify the direction of our ongoing projects.",
+      "Within the plant metaphor, buds begin to open, revealing the early shape of what is forming, though full flowering has not yet occurred."
+    ]
+  },
+  "7": {
+    "keywords": ["Blooming", "Flourishing", "Self-Honouring"],
+    "summary": "A reflective and restorative phase where the results are visible, effort slows down, and self-honouring prepares the way for culmination.",
+    "description": [
+      "A moment of blossoming, where the emerging creation can now be appreciated, even though it is not quite ready to be fully harvested.",
+      "This is a time to slow down, relax, and enjoy periods of quiet and non-action. The primary work of this cycle is complete.",
+      "Ideal for solitude and gentle pleasures such as reading, writing, or listening to music.",
+      "In everyday life, the first half may feel slow or slightly uneasy due to a lack of outward movement.",
+      "During the second half, momentum increases significantly as energy transitions toward the eighth cycle and the peak approaches."
+    ]
+  },
+  "8": {
+    "keywords": ["Fruition", "Culmination", "Prosperity"],
+    "summary": "This is the peak manifestation phase where efforts culminate into tangible results, prosperity, and higher-order rewards.",
+    "description": [
+      "A phase of fulfillment and manifestation. All prior cycles, beginning with the seed, have been guiding us here, with an emphasis on openness to receiving universal offerings.",
+      "The results of our efforts become fully visible and usable. What was held in conscious or subconscious intention now arrives with strength.",
+      "Whatever has been cultivated reaches its completed form.",
+      "In human affairs, this tends to be a prosperous period, often perceived as fortunate by those who believe in luck.",
+      "For those receptive to it, heightened universal energy can deliver higher-level gifts such as spiritual insight and evolutionary growth."
+    ]
+  },
+  "9": {
+    "keywords": ["Stillness", "Reflection", "Preparation"],
+    "summary": "The final phase, which invites deep reflection, integration, and conscious preparation for the beginning of a new cycle.",
+    "description": [
+      "Completion has arrived. This is the moment to review the entire journey from a unified perspective, evaluate the cycle as a whole, and begin preparing for what comes next.",
+      "A potent phase for reflection and meditation. Clarify what occurred, acknowledge it honestly, integrate the lessons, and ready yourself for the next cycle."
+    ]
+  }
 }
