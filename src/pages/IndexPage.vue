@@ -100,10 +100,18 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import meanings from 'src/data/cycleInfo.json'
 
 const birthday = ref('')
+onMounted(() => {
+  birthday.value = localStorage.getItem('birthday') || ''
+})
+
+watch(birthday, (val) => {
+  if (val) localStorage.setItem('birthday', val)
+  else localStorage.removeItem('birthday')
+})
 
 const month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) : null))
 const day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
@@ -113,10 +121,6 @@ const monthCycle = ref(null)
 const dayCycle = ref(null)
 
 const showResult = ref(false)
-
-watch(birthday, () => {
-  showResult.value = false
-})
 
 function pastDatesOnly(date) {
   const today = new Date()
