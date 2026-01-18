@@ -63,7 +63,7 @@
               v-for="col in props.cols"
               :key="col.name"
               :props="props"
-              style="white-space: normal; overflow-wrap: anywhere;text-align:left;'"
+              style="white-space: normal; overflow-wrap: anywhere;'"
             >
               <!-- Row 1: render lists -->
               <template v-if="Array.isArray(props.row[col.name])">
@@ -74,7 +74,18 @@
 
               <!-- Other rows: render text -->
               <template v-else>
-                {{ props.row[col.name] }}
+                <template v-if="props.row.id === 3">
+                  <q-btn color="primary" outline :to="`/cycle-${props.row[col.name]}`">
+                    <div class="column items-center">
+                      <div>Read more about</div>
+                      <div>{{ props.row[col.name] }}-cycles</div>
+                    </div>
+                  </q-btn>
+                </template>
+
+                <template v-else>
+                  {{ props.row[col.name] }}
+                </template>
               </template>
             </q-td>
           </q-tr>
@@ -156,6 +167,12 @@ const cycleRows = computed(() => {
       year: yearCycle.value ? yearObj.summary : '',
       month: monthCycle.value ? monthObj.summary : '',
       day: dayCycle.value ? dayObj.summary : '',
+    },
+    {
+      id: 3,
+      year: yearCycle.value,
+      month: monthCycle.value,
+      day: dayCycle.value,
     },
   ]
 })
