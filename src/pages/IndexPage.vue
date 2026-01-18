@@ -101,7 +101,7 @@
 
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue'
-import meanings from 'src/data/cycleInfo.json'
+import cycleData from 'src/data/cycleInfo.json'
 
 const birthday = ref('')
 onMounted(() => {
@@ -156,9 +156,9 @@ const cycleColumns = computed(() => [
 ])
 
 const cycleRows = computed(() => {
-  const yearObj = meanings?.[String(yearCycle.value)]
-  const monthObj = meanings?.[String(monthCycle.value)]
-  const dayObj = meanings?.[String(dayCycle.value)]
+  const yearObj = cycleData?.[String(yearCycle.value)]
+  const monthObj = cycleData?.[String(monthCycle.value)]
+  const dayObj = cycleData?.[String(dayCycle.value)]
   return [
     {
       id: 1,
