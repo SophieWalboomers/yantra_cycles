@@ -5,7 +5,7 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
       {
-        path: 'cycle-:cycleId(\\d+)',
+        path: 'cycle-info',
         component: () => import('pages/CycleInfo.vue'),
       },
       { path: 'yantra-info', component: () => import('pages/InfoPage.vue') },

@@ -21,9 +21,7 @@
       <q-list>
         <EssentialLink title="Home" to="/" exact />
         <EssentialLink title="About" to="yantra-info" />
-        <q-item-label header> Information per cycle number </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <EssentialLink title="9 Cycles of Time" to="/cycle-info" />
       </q-list>
     </q-drawer>
 
@@ -36,14 +34,6 @@
 <script setup>
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = Array.from({ length: 9 }, (_, i) => {
-  const n = i + 1
-  return {
-    title: `${n}-cycle`,
-    to: `/cycle-${n}`,
-  }
-})
 
 const leftDrawerOpen = ref(false)
 function toggleLeftDrawer() {
