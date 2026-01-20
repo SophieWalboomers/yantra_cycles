@@ -66,48 +66,42 @@
               style="white-space: normal; overflow-wrap: anywhere; vertical-align: top"
             >
               <!-- Row 1: render lists -->
-              <template v-if="Array.isArray(props.row[col.name])">
-                <div v-for="(word, i) in props.row[col.name]" :key="i" style="text-align: center">
-                  {{ word }}
-                </div>
-              </template>
-
-              <!-- Other rows: render text -->
-              <template v-else>
-                <template v-if="props.row.id === 3">
-                  <q-btn
-                    color="primary"
-                    outline
-                    :to="{
-                      path: '/cycle-info',
-                      state: { cycleKey: String(props.row[col.name]) },
-                    }"
-                    :style="{
-                      // 'font-size': $q.screen.gt.sm ? '100%' : '70%',
-                    }"
-                  >
-                    <div class="column items-center">
-                      <div v-if="$q.screen.gt.sm">
-                        <div>Read more about</div>
-                        <div>{{ props.row[col.name] }}-cycles</div>
-                      </div>
-                      <div v-else>More</div>
-                    </div>
-                  </q-btn>
-                </template>
-
-                <template v-else>
-                  <div
-                    :class="{
-                      'text-left': props.row.id === 2,
-                      'text-center': props.row.id !== 2,
-                      hyphenate: $q.screen.lt.md,
-                    }"
-                  >
-                    {{ props.row[col.name] }}
+              <div :class="{ hyphenate: $q.screen.lt.md }">
+                <template v-if="Array.isArray(props.row[col.name])">
+                  <div v-for="(word, i) in props.row[col.name]" :key="i" style="text-align: center">
+                    {{ word }}
                   </div>
                 </template>
-              </template>
+
+                <!-- Other rows: render text -->
+                <template v-else>
+                  <template v-if="props.row.id === 2"
+                    ><div class="text-left">{{ props.row[col.name] }}</div></template
+                  >
+                  <template v-else-if="props.row.id === 4">
+                    <q-btn
+                      color="primary"
+                      outline
+                      :to="{
+                        path: '/cycle-info',
+                        state: { cycleKey: String(props.row[col.name]) },
+                      }"
+                    >
+                      <div class="column items-center">
+                        <div v-if="$q.screen.gt.sm">
+                          <div>Read more about</div>
+                          <div>{{ props.row[col.name] }}-cycles</div>
+                        </div>
+                        <div v-else>More</div>
+                      </div>
+                    </q-btn>
+                  </template>
+
+                  <template v-else>
+                    {{ props.row[col.name] }}
+                  </template>
+                </template>
+              </div>
             </q-td>
           </q-tr>
         </template>
@@ -176,10 +170,42 @@ const cycleColumns = computed(() => [
   { name: 'day', label: `Day cycle: ${dayCycle.value}`, align: 'center' },
 ])
 
+function print_month_ends(monthCycle, year_ends, today) {
+  // monthCycle is a number
+  // year_ends is a date with the following format: 'Jan xx, Feb xx, Mar xx, ...'
+  // this function returns:
+  // if monthCycle maps to the month in year_ends (1 = Jan, 2 = Feb, ...): return year_ends
+  // else (monthCycle does not correspond to the month in year_ends): return 'at the end of this month'
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'July',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+
+  const targetMonth = months[monthCycle - 1]
+
+  // Check whether the target month appears in year_ends
+  if (typeof year_ends === 'string' && year_ends.includes(targetMonth)) {
+    return 'on ' + String(year_ends) + ', ' + today.getFullYear()
+  }
+
+  return 'at the end of this month.'
+}
+
 const cycleRows = computed(() => {
   const yearObj = cycleData?.[String(yearCycle.value)]
   const monthObj = cycleData?.[String(monthCycle.value)]
   const dayObj = cycleData?.[String(dayCycle.value)]
+  const today = new Date()
   return [
     {
       id: 1,
@@ -195,6 +221,17 @@ const cycleRows = computed(() => {
     },
     {
       id: 3,
+      year:
+        'This cycle ends on ' +
+        String(yearCycle.value ? yearObj.year_ends : '') +
+        ', ' +
+        today.getFullYear() +
+        '.',
+      month: 'This cycle ends ' + print_month_ends(monthCycle.value, yearObj.year_ends, today),
+      day: 'This cycle ends at the end of the day.',
+    },
+    {
+      id: 4,
       year: yearCycle.value,
       month: monthCycle.value,
       day: dayCycle.value,
