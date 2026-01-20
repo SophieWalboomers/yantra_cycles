@@ -6,7 +6,7 @@
       it will direct your life and you will call it fate.”
     </div>
     <div class="q-pb-md">― C.G. Jung</div>
-    <div class="text-body1">
+    <div class="text-body1 text-center" style="max-width: 80%">
       Understand the energies impacting you right now, to unlock your highest potential and live
       your Dharma.
     </div>
@@ -46,7 +46,7 @@
         </div>
       </div>-->
       <q-table
-        class="q-mt-lg q-px-lg"
+        class="q-mt-lg q-px-sm"
         flat
         hide-bottom
         separator="cell"
@@ -63,7 +63,7 @@
               v-for="col in props.cols"
               :key="col.name"
               :props="props"
-              style="white-space: normal; overflow-wrap: anywhere;'"
+              style="white-space: normal; overflow-wrap: anywhere; vertical-align: top"
             >
               <!-- Row 1: render lists -->
               <template v-if="Array.isArray(props.row[col.name])">
@@ -82,16 +82,30 @@
                       path: '/cycle-info',
                       state: { cycleKey: String(props.row[col.name]) },
                     }"
+                    :style="{
+                      // 'font-size': $q.screen.gt.sm ? '100%' : '70%',
+                    }"
                   >
                     <div class="column items-center">
-                      <div>Read more about</div>
-                      <div>{{ props.row[col.name] }}-cycles</div>
+                      <div v-if="$q.screen.gt.sm">
+                        <div>Read more about</div>
+                        <div>{{ props.row[col.name] }}-cycles</div>
+                      </div>
+                      <div v-else>More</div>
                     </div>
                   </q-btn>
                 </template>
 
                 <template v-else>
-                  {{ props.row[col.name] }}
+                  <div
+                    :class="{
+                      'text-left': props.row.id === 2,
+                      'text-center': props.row.id !== 2,
+                      hyphenate: $q.screen.lt.md,
+                    }"
+                  >
+                    {{ props.row[col.name] }}
+                  </div>
                 </template>
               </template>
             </q-td>
@@ -188,3 +202,13 @@ const cycleRows = computed(() => {
   ]
 })
 </script>
+<style scoped>
+.hyphenate {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+
+  overflow-wrap: break-word; /* fallback */
+  word-break: normal;
+}
+</style>

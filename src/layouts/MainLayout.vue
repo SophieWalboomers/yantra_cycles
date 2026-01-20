@@ -1,16 +1,12 @@
 <template>
   <q-layout view="hhh Lpr lFf">
-    <q-header elevated class="text-black" style="background-color: white">
+    <q-header elevated class="text-black" style="background-color: primary">
       <q-toolbar style="height: 6rem">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>Vedic Numerology / Ank Jyotish Calculator</q-toolbar-title>
         <div class="absolute-center">
           <EssentialLink to="/">
-            <img
-              alt="Shri Yantra"
-              src="~assets/sri_yantra_image.webp"
-              style="width: 5rem; height: auto"
-            />
+            <img alt="Shri Yantra" src="/icons/sri-yantra.png" style="width: 5rem; height: auto" />
           </EssentialLink>
         </div>
         <div>By Sophie Walboomers</div>
