@@ -75,7 +75,7 @@
 
                 <!-- Other rows: render text -->
                 <template v-else>
-                  <template v-if="props.row.id === 2"
+                  <template v-if="props.row.id === 3"
                     ><div class="text-left">{{ props.row[col.name] }}</div></template
                   >
                   <template v-else-if="props.row.id === 4">
@@ -128,8 +128,13 @@ watch(birthday, (val) => {
   else localStorage.removeItem('birthday')
 })
 
-const month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) : null))
-const day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+const today = new Date()
+
+// - 1 so it corresponds to Date object indexing (Jan = 0, etc.)
+const birth_month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) - 1 : null))
+const birth_day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
 
 const yearCycle = ref(null)
 const monthCycle = ref(null)
@@ -137,8 +142,10 @@ const dayCycle = ref(null)
 
 const showResult = ref(false)
 
+const curr_cycle_startdate = ref('')
+const curr_cycle_enddate = ref('')
+
 function pastDatesOnly(date) {
-  const today = new Date()
   const [year, month, day] = date.split('/').map(Number)
 
   const selectedDate = new Date(year, month - 1, day)
@@ -151,9 +158,52 @@ function mod9to1(n) {
 }
 
 function calculate() {
-  const today = new Date()
+  yearCycle.value = mod9to1(birth_month.value + 1 + birth_day.value + today.getFullYear() + 1)
+  const end_date_cycle = cycleData[String(yearCycle.value)].year_ends
 
-  yearCycle.value = mod9to1(month.value + day.value + today.getFullYear() + 1)
+  // we already entered the next cycle, the new cycle started this year
+  if (today.getMonth() > months.indexOf(end_date_cycle.slice(0, 3))) {
+    yearCycle.value = mod9to1(yearCycle.value + 1)
+    curr_cycle_startdate.value = new Date(
+      today.getFullYear(),
+      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+    )
+    curr_cycle_enddate.value = new Date(
+      today.getFullYear() + 1,
+      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+    )
+  } else if (
+    today.getMonth() == months.indexOf(end_date_cycle.slice(0, 3)) &&
+    today.getDate() > end_date_cycle.slice(-2)
+  ) {
+    yearCycle.value = mod9to1(yearCycle.value + 1)
+    curr_cycle_startdate.value = new Date(
+      today.getFullYear(),
+      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+    )
+    curr_cycle_enddate.value = new Date(
+      today.getFullYear() + 1,
+      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+    )
+  }
+  // we are still in the current cycle, which started last year
+  else {
+    curr_cycle_startdate.value = new Date(
+      today.getFullYear() - 1,
+      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+    )
+    curr_cycle_enddate.value = new Date(
+      today.getFullYear(),
+      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+    )
+  }
+
   monthCycle.value = mod9to1(yearCycle.value - (7 - (today.getMonth() + 1)))
   dayCycle.value = mod9to1(monthCycle.value + today.getDate())
 
@@ -163,72 +213,77 @@ function calculate() {
 const cycleColumns = computed(() => [
   {
     name: 'year',
-    label: `Year cycle: ${yearCycle.value}`,
+    label: `Yearly cycle: ${yearCycle.value}`,
     align: 'center',
   },
-  { name: 'month', label: `Month cycle: ${monthCycle.value}`, align: 'center' },
-  { name: 'day', label: `Day cycle: ${dayCycle.value}`, align: 'center' },
+  { name: 'month', label: `Monthly cycle: ${monthCycle.value}`, align: 'center' },
+  { name: 'day', label: `Daily cycle: ${dayCycle.value}`, align: 'center' },
 ])
 
-function print_month_ends(monthCycle, year_ends, today) {
-  // monthCycle is a number
-  // year_ends is a date with the following format: 'Jan xx, Feb xx, Mar xx, ...'
-  // this function returns:
-  // if monthCycle maps to the month in year_ends (1 = Jan, 2 = Feb, ...): return year_ends
-  // else (monthCycle does not correspond to the month in year_ends): return 'at the end of this month'
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'July',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
+function parseDate(dateObj) {
+  return String(dateObj.getDate()) + ' ' + months[dateObj.getMonth()] + ' ' + dateObj.getFullYear()
+}
 
-  const targetMonth = months[monthCycle - 1]
+function print_yearcycle_runtime() {
+  return (
+    'This cycle runs from ' +
+    parseDate(curr_cycle_startdate.value) +
+    ', until ' +
+    parseDate(curr_cycle_enddate.value)
+  )
+}
 
-  // Check whether the target month appears in year_ends
-  if (typeof year_ends === 'string' && year_ends.includes(targetMonth)) {
-    return 'on ' + String(year_ends) + ', ' + today.getFullYear()
+function print_monthcycle_runtime() {
+  // default: first & last day of the month
+  const start = ref(new Date(today.getFullYear(), today.getMonth(), 1))
+  const end = ref(new Date(today.getFullYear(), today.getMonth() + 1, 0))
+
+  // we already entered the next cycle, the new cycle STARTED THIS month
+  if (
+    today.getMonth() == curr_cycle_startdate.value.getMonth() &&
+    today.getDate() >= curr_cycle_startdate.value.getDate()
+  ) {
+    start.value = curr_cycle_startdate.value
+  }
+  // we are still in the current cycle, the cycle ENDS THIS month
+  else if (
+    today.getMonth() == curr_cycle_enddate.value.getMonth() &&
+    today.getDate() <= curr_cycle_enddate.value.getDate()
+  ) {
+    end.value = curr_cycle_enddate.value
   }
 
-  return 'at the end of this month.'
+  // else:
+  // we are still in the current cycle, the new cycle begins in a future month
+  // OR
+  // we already entered the next cycle, the new cycle started in a past month
+  // --> nothing happens
+
+  return 'This cycle runs from ' + parseDate(start.value) + ', until ' + parseDate(end.value)
 }
 
 const cycleRows = computed(() => {
   const yearObj = cycleData?.[String(yearCycle.value)]
   const monthObj = cycleData?.[String(monthCycle.value)]
   const dayObj = cycleData?.[String(dayCycle.value)]
-  const today = new Date()
   return [
     {
       id: 1,
+      year: print_yearcycle_runtime(yearObj),
+      month: print_monthcycle_runtime(yearObj),
+      day: 'Lasts only today',
+    },
+    {
+      id: 2,
       year: yearCycle.value ? yearObj.keywords : [],
       month: monthCycle.value ? monthObj.keywords : [],
       day: dayCycle.value ? dayObj.keywords : [],
     },
     {
-      id: 2,
+      id: 3,
       year: yearCycle.value ? yearObj.summary : '',
       month: monthCycle.value ? monthObj.summary : '',
       day: dayCycle.value ? dayObj.summary : '',
-    },
-    {
-      id: 3,
-      year:
-        'This cycle ends on ' +
-        String(yearCycle.value ? yearObj.year_ends : '') +
-        ', ' +
-        today.getFullYear() +
-        '.',
-      month: 'This cycle ends ' + print_month_ends(monthCycle.value, yearObj.year_ends, today),
-      day: 'This cycle ends at the end of the day.',
     },
     {
       id: 4,
