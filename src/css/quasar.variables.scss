@@ -23,3 +23,13 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #ffe3bf;
 $warning: #ff7142;
+
+$typography-font-family: 'Merriweather', Georgia, serif;
+.text-weight-medium {
+  font-weight: 400;
+}
+.text-weight-bold,
+b,
+strong {
+  font-weight: 700;
+}

@@ -14,7 +14,7 @@
     <q-separator class="q-my-lg" />
 
     <q-card flat>
-      <div class="text-subtitle2 q-mb-sm">Select your birthday</div>
+      <div class="text-subtitle2 q-mb-sm"><b>Select your birthday</b></div>
       <q-date
         v-model="birthday"
         mask="YYYY-MM-DD"
@@ -24,7 +24,7 @@
       />
     </q-card>
 
-    <q-btn color="primary" @click="calculate">
+    <q-btn color="primary" @click="calculate" class="text-bold">
       Calculate <br />
       energetic influences</q-btn
     >
@@ -46,7 +46,7 @@
         </div>
       </div>-->
       <q-table
-        class="q-mt-lg q-px-sm"
+        class="q-mt-lg q-px-sm cycle-table"
         flat
         hide-bottom
         separator="cell"
@@ -57,6 +57,15 @@
           width: $q.screen.gt.sm ? '50%' : '100%',
         }"
       >
+        <template #header="props">
+          <q-tr :props="props">
+            <q-th v-for="col in props.cols" :key="col.name" :props="props">
+              <div class="text-bold">
+                {{ col.label }}
+              </div>
+            </q-th>
+          </q-tr>
+        </template>
         <template #body="props">
           <q-tr :props="props">
             <q-td
