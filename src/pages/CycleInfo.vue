@@ -21,7 +21,7 @@
             :name="key"
             class="column no-wrap items-center q-pa-md"
           >
-            <div class="text-h5 q-mt-md">Cycle {{ key }}</div>
+            <div class="text-h5 q-mt-md text-bold">Cycle {{ key }}</div>
             <div class="text-subtitle1 q-mt-sm text-grey-7">
               {{ cycle.keywords.join(' · ') }}
             </div>
