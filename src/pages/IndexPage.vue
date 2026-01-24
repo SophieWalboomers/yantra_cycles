@@ -24,7 +24,7 @@
       />
     </q-card>
 
-    <q-btn color="primary" @click="calculate" class="text-bold">
+    <q-btn color="accent" @click="calculate" class="text-bold">
       Calculate <br />
       energetic influences</q-btn
     >
@@ -89,7 +89,7 @@
                   >
                   <template v-else-if="props.row.id === 4">
                     <q-btn
-                      color="primary"
+                      color="accent"
                       outline
                       :to="{
                         path: '/cycle-info',

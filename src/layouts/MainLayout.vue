@@ -1,22 +1,23 @@
 <template>
   <q-layout view="hhh Lpr lFf">
     <q-header elevated class="text-black" style="background-color: primary">
-      <q-toolbar style="height: 6rem">
+      <q-toolbar class="header-toolbar">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title>Vedic Numerology / Ank Jyotish Calculator</q-toolbar-title>
         <div class="absolute-center">
-          <EssentialLink to="/">
-            <img alt="Shri Yantra" src="/icons/sri-yantra.png" style="width: 5rem; height: auto" />
+          <EssentialLink to="/" class="header-image">
+            <img
+              alt="Vedic numerology / Ank Jyotish calculator"
+              src="/icons/vedic_numerology_stretched.png"
+            />
           </EssentialLink>
         </div>
-        <div>By Sophie Walboomers</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" bordered overlay>
       <q-list>
         <EssentialLink title="Home" to="/" exact />
-        <EssentialLink title="About" to="yantra-info" />
+        <EssentialLink title="About" to="/yantra-info" />
         <EssentialLink title="9 Cycles of Time" to="/cycle-info" />
       </q-list>
     </q-drawer>
@@ -36,3 +37,13 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
+
+<style scoped>
+.header-toolbar {
+  height: clamp(5rem, 10vw, 10rem);
+}
+
+.header-image img {
+  height: clamp(5rem, 10vw, 10rem);
+}
+</style>
