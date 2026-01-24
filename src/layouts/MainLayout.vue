@@ -3,7 +3,7 @@
     <q-header elevated class="text-black" style="background-color: primary">
       <q-toolbar class="header-toolbar">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <div class="absolute-center">
+        <div class="absolute-center" style="max-width: 80%">
           <EssentialLink to="/" class="header-image">
             <img
               alt="Vedic numerology / Ank Jyotish calculator"

@@ -1,7 +1,7 @@
 <template>
   <q-page class="column items-center">
     <q-separator class="q-my-lg" />
-    <div class="text-body1 text-italic">
+    <div class="text-body1 text-italic q-px-sm text-center">
       “Until you make the unconscious conscious, <br />
       it will direct your life and you will call it fate.”
     </div>

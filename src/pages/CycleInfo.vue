@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <div
         :style="{
-          maxWidth: $q.screen.gt.sm ? '50%' : '100%',
+          maxWidth: $q.screen.gt.sm ? '55%' : '100%',
         }"
       >
         <q-carousel
@@ -11,8 +11,11 @@
           transition-prev="slide-right"
           transition-next="slide-left"
           animated
-          control-color="secondary"
-          class="rounded-borders"
+          :swipeable="$q.screen.lt.md"
+          :arrows="$q.screen.gt.sm"
+          :padding="$q.screen.gt.sm"
+          control-color="black"
+          class="rounded-borders q-pb-md"
           :height="$q.screen.lt.md ? '80vh' : ''"
         >
           <q-carousel-slide
@@ -38,7 +41,12 @@
     </div>
 
     <div class="row justify-center">
-      <q-btn-toggle glossy v-model="slide" :options="toggleOptions" />
+      <q-btn-toggle
+        v-model="slide"
+        :options="toggleOptions"
+        toggle-text-color="black"
+        toggle-text-weight="bold"
+      />
     </div>
   </q-page>
 </template>
