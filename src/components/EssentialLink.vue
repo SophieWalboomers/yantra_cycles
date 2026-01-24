@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable v-bind="linkProps">
+  <q-item clickable v-bind="linkProps" :active="isActive" active-class="drawer-link-active">
     <template v-if="$slots.default">
       <slot />
     </template>
@@ -19,6 +19,13 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const isActive = computed(() => {
+  return props.to && route.path === props.to
+})
 
 const props = defineProps({
   title: {
@@ -50,3 +57,9 @@ const linkProps = computed(() =>
     : { to: props.to },
 )
 </script>
+
+<style scoped lang="scss">
+.drawer-link-active {
+  color: $accent; /* text color */
+}
+</style>
