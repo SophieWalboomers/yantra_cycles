@@ -1,6 +1,6 @@
-# DharmaMarga (quasar-project)
+# AnkJyotish (quasar-project)
 
-A web-app to check your Dharma Marga info
+A web-app to calculate your personal, daily vedic numerology (Ank Jyotish)
 
 ## Install the dependencies
 
