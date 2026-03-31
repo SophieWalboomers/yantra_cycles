@@ -1,5 +1,79 @@
 <template>
   <q-page class="column items-center">
+    <!-- Popup -->
+    <q-dialog v-model="showLeadPopup">
+      <q-card style="width: 100%; max-width: 420px" class="q-pa-md">
+        <q-card-section class="text-center">
+          <div class="text-h6 text-bold q-mb-sm">
+            Get your free personalized Dharma Marga report
+          </div>
+          <div class="text-body2">
+            Enter your email and birth date to receive your personalized report.
+          </div>
+        </q-card-section>
+
+        <q-card-section class="q-gutter-md">
+          <q-input
+            v-model="email"
+            type="email"
+            label="Email"
+            outlined
+            dense
+            :rules="[
+              (val) => !!val || 'Email is required',
+              (val) => /.+@.+\..+/.test(val) || 'Enter a valid email',
+            ]"
+          />
+
+          <div>
+            <div class="text-subtitle2 q-mb-sm"><b>Birth date</b></div>
+
+            <div class="row q-col-gutter-sm">
+              <div class="col-4">
+                <q-select
+                  v-model="birthDay"
+                  :options="dayOptions"
+                  label="Day"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                />
+              </div>
+
+              <div class="col-4">
+                <q-select
+                  v-model="birthMonth"
+                  :options="monthOptions"
+                  label="Month"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                />
+              </div>
+
+              <div class="col-4">
+                <q-select
+                  v-model="birthYear"
+                  :options="yearOptions"
+                  label="Year"
+                  outlined
+                  dense
+                  emit-value
+                  map-options
+                />
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="between">
+          <q-btn flat label="Not now" @click="dismissPopup" />
+          <q-btn color="accent" label="Get my free report" @click="submitLeadForm" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-separator class="q-my-lg" />
     <div class="text-body1 text-italic q-px-sm text-center">
       “Until you make the unconscious conscious, <br />
@@ -20,6 +94,7 @@
         mask="YYYY-MM-DD"
         minimal
         navigation-type="select"
+        color="accent"
         :options="pastDatesOnly"
       />
     </q-card>
@@ -125,16 +200,91 @@
 
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue'
+import { useQuasar } from 'quasar'
 import cycleData from 'src/data/cycleInfo.json'
 
+const $q = useQuasar()
+
 const birthday = ref('')
+const email = ref('')
+const showLeadPopup = ref(false)
+
+const birthDay = ref(null)
+const birthMonth = ref(null)
+const birthYear = ref(null)
+
+const monthOptions = [
+  { label: 'Jan', value: 1 },
+  { label: 'Feb', value: 2 },
+  { label: 'Mar', value: 3 },
+  { label: 'Apr', value: 4 },
+  { label: 'May', value: 5 },
+  { label: 'Jun', value: 6 },
+  { label: 'Jul', value: 7 },
+  { label: 'Aug', value: 8 },
+  { label: 'Sep', value: 9 },
+  { label: 'Oct', value: 10 },
+  { label: 'Nov', value: 11 },
+  { label: 'Dec', value: 12 },
+]
+
+const currentYear = new Date().getFullYear()
+
+const yearOptions = computed(() => {
+  const years = []
+  for (let y = currentYear; y >= 1900; y--) {
+    years.push({ label: String(y), value: y })
+  }
+  return years
+})
+
+const dayOptions = computed(() => {
+  if (!birthMonth.value || !birthYear.value) {
+    return Array.from({ length: 31 }, (_, i) => ({
+      label: String(i + 1),
+      value: i + 1,
+    }))
+  }
+
+  const daysInMonth = new Date(birthYear.value, birthMonth.value, 0).getDate()
+
+  return Array.from({ length: daysInMonth }, (_, i) => ({
+    label: String(i + 1),
+    value: i + 1,
+  }))
+})
+
 onMounted(() => {
   birthday.value = localStorage.getItem('birthday') || ''
+  email.value = localStorage.getItem('leadEmail') || ''
+
+  // Show popup on first-time page load
+  const hasSeenInSession = sessionStorage.getItem('leadPopupShown')
+
+  const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload'
+
+  if (isReload || !hasSeenInSession) {
+    showLeadPopup.value = true
+    sessionStorage.setItem('leadPopupShown', 'true')
+  }
 })
 
 watch(birthday, (val) => {
   if (val) localStorage.setItem('birthday', val)
   else localStorage.removeItem('birthday')
+})
+
+watch(email, (val) => {
+  if (val) localStorage.setItem('leadEmail', val)
+  else localStorage.removeItem('leadEmail')
+})
+
+watch([birthYear, birthMonth, birthDay], ([year, month, day]) => {
+  if (year && month && day) {
+    birthday.value = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  } else {
+    birthday.value = ''
+  }
 })
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -153,6 +303,39 @@ const showResult = ref(false)
 
 const curr_cycle_startdate = ref('')
 const curr_cycle_enddate = ref('')
+
+function dismissPopup() {
+  showLeadPopup.value = false
+}
+
+function submitLeadForm() {
+  if (!email.value || !/.+@.+\..+/.test(email.value)) {
+    $q.notify({
+      type: 'negative',
+      message: 'Please enter a valid email address.',
+    })
+    return
+  }
+
+  if (!birthday.value) {
+    $q.notify({
+      type: 'negative',
+      message: 'Please select your birth date.',
+    })
+    return
+  }
+
+  // TODO: Hook your API / email service here
+
+  $q.notify({
+    type: 'positive',
+    message: 'Thanks! Check your email for your free personalized Dharma Marga report.',
+    color: 'accent',
+    textColor: 'white',
+  })
+
+  showLeadPopup.value = false
+}
 
 function pastDatesOnly(date) {
   const [year, month, day] = date.split('/').map(Number)
