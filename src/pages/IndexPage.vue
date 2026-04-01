@@ -69,7 +69,7 @@
         </q-card-section>
 
         <q-card-actions align="between">
-          <q-btn flat label="Not now" @click="dismissPopup" />
+          <q-btn flat label="Not now" @click="showLeadPopup = false" />
           <q-btn color="accent" label="Get my free report" @click="submitLeadForm" />
         </q-card-actions>
       </q-card>
@@ -256,7 +256,6 @@ const dayOptions = computed(() => {
 
 onMounted(() => {
   birthday.value = localStorage.getItem('birthday') || ''
-  email.value = localStorage.getItem('leadEmail') || ''
 
   // Show popup on first-time page load
   const hasSeenInSession = sessionStorage.getItem('leadPopupShown')
@@ -269,21 +268,16 @@ onMounted(() => {
   }
 })
 
+// if birthday changes, save to localStorage (or remove if empty)
 watch(birthday, (val) => {
   if (val) localStorage.setItem('birthday', val)
   else localStorage.removeItem('birthday')
 })
 
-watch(email, (val) => {
-  if (val) localStorage.setItem('leadEmail', val)
-  else localStorage.removeItem('leadEmail')
-})
-
+// sync birthday with values of the popup
 watch([birthYear, birthMonth, birthDay], ([year, month, day]) => {
   if (year && month && day) {
     birthday.value = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-  } else {
-    birthday.value = ''
   }
 })
 
@@ -304,10 +298,6 @@ const showResult = ref(false)
 const curr_cycle_startdate = ref('')
 const curr_cycle_enddate = ref('')
 
-function dismissPopup() {
-  showLeadPopup.value = false
-}
-
 function submitLeadForm() {
   if (!email.value || !/.+@.+\..+/.test(email.value)) {
     $q.notify({
@@ -317,15 +307,15 @@ function submitLeadForm() {
     return
   }
 
-  if (!birthday.value) {
+  if (!birthYear.value || !birthMonth.value || !birthDay.value) {
     $q.notify({
       type: 'negative',
-      message: 'Please select your birth date.',
+      message: 'Please select a valid birth date.',
     })
     return
   }
 
-  // TODO: Hook your API / email service here
+  // TODO: Hook API / email service here
 
   $q.notify({
     type: 'positive',
