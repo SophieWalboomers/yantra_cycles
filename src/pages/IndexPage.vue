@@ -261,7 +261,8 @@ onMounted(() => {
   const hasSeenInSession = sessionStorage.getItem('leadPopupShown')
 
   const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload'
-
+  checkBackend1()
+  checkBackend2()
   if (isReload || !hasSeenInSession) {
     showLeadPopup.value = true
     sessionStorage.setItem('leadPopupShown', 'true')
@@ -475,6 +476,39 @@ const cycleRows = computed(() => {
     },
   ]
 })
+
+// test POST method from /api/calculate
+async function checkBackend1() {
+  const response = await fetch('http://localhost:3001/api/calculate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      birthDate: '1998-12-09',
+      // currentDate: '2026-13-04',
+    }),
+  })
+
+  const data = await response.json()
+  console.log(data)
+}
+
+async function checkBackend2() {
+  const response = await fetch('http://localhost:3001/api/lead-capture', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: 'testemail@email.com',
+      birthDate: '1998-12-09',
+    }),
+  })
+
+  const data = await response.json()
+  console.log(data)
+}
 </script>
 <style scoped>
 .hyphenate {
