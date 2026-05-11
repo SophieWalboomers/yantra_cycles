@@ -317,8 +317,8 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const today = new Date()
 
 // - 1 so it corresponds to Date object indexing (Jan = 0, etc.)
-const birth_month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) - 1 : null))
-const birth_day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
+// const birth_month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) - 1 : null))
+// const birth_day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
 
 const yearCycle = ref(null)
 const monthCycle = ref(null)
@@ -366,61 +366,47 @@ function pastDatesOnly(date) {
   return selectedDate < today
 }
 
-function mod9to1(n) {
-  return ((((n - 1) % 9) + 9) % 9) + 1
-}
-
-function calculate() {
-  yearCycle.value = mod9to1(birth_month.value + 1 + birth_day.value + today.getFullYear() + 1)
-  const end_date_cycle = cycleData.value[String(yearCycle.value)].year_ends
-
-  // we already entered the next cycle, the new cycle started this year
-  if (today.getMonth() > months.indexOf(end_date_cycle.slice(0, 3))) {
-    yearCycle.value = mod9to1(yearCycle.value + 1)
-    curr_cycle_startdate.value = new Date(
-      today.getFullYear(),
-      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
-    )
-    curr_cycle_enddate.value = new Date(
-      today.getFullYear() + 1,
-      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
-    )
-  } else if (
-    today.getMonth() == months.indexOf(end_date_cycle.slice(0, 3)) &&
-    today.getDate() > end_date_cycle.slice(-2)
-  ) {
-    yearCycle.value = mod9to1(yearCycle.value + 1)
-    curr_cycle_startdate.value = new Date(
-      today.getFullYear(),
-      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
-    )
-    curr_cycle_enddate.value = new Date(
-      today.getFullYear() + 1,
-      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
-    )
-  }
-  // we are still in the current cycle, which started last year
-  else {
-    curr_cycle_startdate.value = new Date(
-      today.getFullYear() - 1,
-      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
-    )
-    curr_cycle_enddate.value = new Date(
-      today.getFullYear(),
-      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
-    )
+async function calculate() {
+  if (!birthday.value) {
+    $q.notify({
+      type: 'negative',
+      message: 'Please select your birth date before calculating.',
+    })
+    return
   }
 
-  monthCycle.value = mod9to1(yearCycle.value - (7 - (today.getMonth() + 1)))
-  dayCycle.value = mod9to1(monthCycle.value + today.getDate())
+  if (!cycleData.value) {
+    $q.notify({
+      type: 'negative',
+      message: 'Cycle data is still loading. Please wait a moment.',
+    })
+    return
+  }
 
-  showResult.value = true
+  try {
+    // call backend
+    const response = await axios.post('http://localhost:3001/api/calculate', {
+      birthDate: birthday.value,
+    })
+
+    if (!response.data.success) {
+      throw new Error(response.data.error || 'Calculation failed')
+    }
+
+    // store backend results
+    yearCycle.value = response.data.yearCycle
+    monthCycle.value = response.data.monthCycle
+    dayCycle.value = response.data.dayCycle
+    curr_cycle_startdate.value = new Date(response.data.cycleStartDate)
+    curr_cycle_enddate.value = new Date(response.data.cycleEndDate)
+    showResult.value = true
+  } catch (error) {
+    console.error('Failed to calculate cycles:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Unable to calculate your cycle information. Please try again.',
+    })
+  }
 }
 
 const cycleColumns = computed(() => [
