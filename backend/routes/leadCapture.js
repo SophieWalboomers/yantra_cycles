@@ -1,6 +1,9 @@
 import express from 'express'
+import { validateEmail, validateBirthDate } from '../utils/validation.js'
+import { initializeDb, saveLead } from '../db/index.js'
 
 const router = express.Router()
+initializeDb()
 
 /**
  * POST /api/lead-capture
@@ -18,22 +21,39 @@ const router = express.Router()
  *   message: string
  * }
  */
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { email, birthDate } = req.body
 
-    // TODO: Validate email format
-    // TODO: Validate birth date format
-    // TODO: Save to database
-    // TODO: Send confirmation email (optional)
-    // TODO: Return success response
+    if (!email || !validateEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email address',
+      })
+    }
+
+    if (!birthDate || !validateBirthDate(birthDate)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid birth date. Expected YYYY-MM-DD',
+      })
+    }
+
+    // TODO: Implement CAPTCHA verification to prevent bot submissions and spam in the lead capture form
+
+    const lead = await saveLead({ email, birthDate })
 
     res.json({
-      message: 'Lead capture endpoint - to be implemented',
-      receivedData: { email, birthDate },
+      success: true,
+      message: 'Lead captured successfully',
+      lead,
     })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    console.error('Lead capture error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Unable to capture lead at this time',
+    })
   }
 })
 
