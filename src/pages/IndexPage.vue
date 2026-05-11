@@ -201,7 +201,7 @@
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
-import cycleData from 'src/data/cycleInfo.json'
+import axios from 'axios'
 
 const $q = useQuasar()
 
@@ -212,6 +212,10 @@ const showLeadPopup = ref(false)
 const birthDay = ref(null)
 const birthMonth = ref(null)
 const birthYear = ref(null)
+
+// Cycle data fetched from API
+const cycleData = ref(null)
+const cycleDataError = ref(null)
 
 const monthOptions = [
   { label: 'Jan', value: 1 },
@@ -261,13 +265,39 @@ onMounted(() => {
   const hasSeenInSession = sessionStorage.getItem('leadPopupShown')
 
   const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload'
-  checkBackend1()
-  checkBackend2()
+
   if (isReload || !hasSeenInSession) {
     showLeadPopup.value = true
     sessionStorage.setItem('leadPopupShown', 'true')
   }
+
+  // Fetch cycle data from API
+  fetchCycleData()
 })
+
+// Fetch cycle data from backend API
+async function fetchCycleData() {
+  try {
+    cycleDataError.value = null
+
+    const response = await axios.get('http://localhost:3001/api/calculate/cycle-data')
+
+    if (response.data.success) {
+      cycleData.value = response.data.data
+    } else {
+      throw new Error('Failed to load cycle data')
+    }
+  } catch (error) {
+    console.error('Error fetching cycle data:', error)
+    cycleDataError.value = error.message
+
+    // Fallback: show error notification
+    $q.notify({
+      type: 'negative',
+      message: 'Failed to load cycle information.',
+    })
+  }
+}
 
 // if birthday changes, save to localStorage (or remove if empty)
 watch(birthday, (val) => {
@@ -342,20 +372,20 @@ function mod9to1(n) {
 
 function calculate() {
   yearCycle.value = mod9to1(birth_month.value + 1 + birth_day.value + today.getFullYear() + 1)
-  const end_date_cycle = cycleData[String(yearCycle.value)].year_ends
+  const end_date_cycle = cycleData.value[String(yearCycle.value)].year_ends
 
   // we already entered the next cycle, the new cycle started this year
   if (today.getMonth() > months.indexOf(end_date_cycle.slice(0, 3))) {
     yearCycle.value = mod9to1(yearCycle.value + 1)
     curr_cycle_startdate.value = new Date(
       today.getFullYear(),
-      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
     )
     curr_cycle_enddate.value = new Date(
       today.getFullYear() + 1,
-      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
     )
   } else if (
     today.getMonth() == months.indexOf(end_date_cycle.slice(0, 3)) &&
@@ -364,26 +394,26 @@ function calculate() {
     yearCycle.value = mod9to1(yearCycle.value + 1)
     curr_cycle_startdate.value = new Date(
       today.getFullYear(),
-      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
     )
     curr_cycle_enddate.value = new Date(
       today.getFullYear() + 1,
-      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
     )
   }
   // we are still in the current cycle, which started last year
   else {
     curr_cycle_startdate.value = new Date(
       today.getFullYear() - 1,
-      months.indexOf(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
-      Number(cycleData[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
+      months.indexOf(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(0, 3)),
+      Number(cycleData.value[String(mod9to1(yearCycle.value - 1))].year_ends.slice(-2)) + 1,
     )
     curr_cycle_enddate.value = new Date(
       today.getFullYear(),
-      months.indexOf(cycleData[String(yearCycle.value)].year_ends.slice(0, 3)),
-      cycleData[String(yearCycle.value)].year_ends.slice(-2),
+      months.indexOf(cycleData.value[String(yearCycle.value)].year_ends.slice(0, 3)),
+      cycleData.value[String(yearCycle.value)].year_ends.slice(-2),
     )
   }
 
@@ -446,9 +476,9 @@ function print_monthcycle_runtime() {
 }
 
 const cycleRows = computed(() => {
-  const yearObj = cycleData?.[String(yearCycle.value)]
-  const monthObj = cycleData?.[String(monthCycle.value)]
-  const dayObj = cycleData?.[String(dayCycle.value)]
+  const yearObj = cycleData.value?.[String(yearCycle.value)]
+  const monthObj = cycleData.value?.[String(monthCycle.value)]
+  const dayObj = cycleData.value?.[String(dayCycle.value)]
   return [
     {
       id: 1,
@@ -476,39 +506,6 @@ const cycleRows = computed(() => {
     },
   ]
 })
-
-// test POST method from /api/calculate
-async function checkBackend1() {
-  const response = await fetch('http://localhost:3001/api/calculate', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      birthDate: '1998-12-09',
-      // currentDate: '2026-13-04',
-    }),
-  })
-
-  const data = await response.json()
-  console.log(data)
-}
-
-async function checkBackend2() {
-  const response = await fetch('http://localhost:3001/api/lead-capture', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: 'testemail@email.com',
-      birthDate: '1998-12-09',
-    }),
-  })
-
-  const data = await response.json()
-  console.log(data)
-}
 </script>
 <style scoped>
 .hyphenate {
