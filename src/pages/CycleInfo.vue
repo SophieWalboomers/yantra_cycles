@@ -1,6 +1,14 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="row justify-center">
+    <!-- Error state -->
+    <div v-if="cycleDataError" class="text-center q-pa-lg">
+      <q-icon name="error" size="3em" color="negative" />
+      <div class="q-mt-md text-negative">Failed to load cycle data</div>
+      <q-btn color="accent" @click="fetchCycleData" class="q-mt-md">Try Again</q-btn>
+    </div>
+
+    <!-- Main content -->
+    <div v-else-if="cycleData" class="row justify-center">
       <div class="col-12" :style="{ maxWidth: $q.screen.gt.sm ? '55%' : '100%' }">
         <q-splitter v-model="splitterModel" unit="%">
           <!-- LEFT: vertical tabs -->
@@ -62,8 +70,11 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import cycleData from 'src/data/cycleInfo.json'
+import { computed, ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const cycleData = ref(null)
+const cycleDataError = ref(null)
 
 const cycleKey = computed(() => {
   const stateKey = window.history.state?.cycleKey
@@ -72,6 +83,28 @@ const cycleKey = computed(() => {
 
 const tab = ref(cycleKey.value)
 const splitterModel = ref(22)
+
+onMounted(() => {
+  fetchCycleData()
+})
+
+// Fetch cycle data from backend API
+async function fetchCycleData() {
+  try {
+    cycleDataError.value = null
+
+    const response = await axios.get('http://localhost:3001/api/calculate/cycle-data')
+
+    if (response.data.success) {
+      cycleData.value = response.data.data
+    } else {
+      throw new Error('Failed to load cycle data')
+    }
+  } catch (error) {
+    console.error('Error fetching cycle data:', error)
+    cycleDataError.value = error.message
+  } 
+}
 </script>
 
 <style scoped>
