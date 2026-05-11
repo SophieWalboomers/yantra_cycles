@@ -9,6 +9,8 @@ backend/
 ├── index.js              # Main Express server entry point
 ├── package.json          # Dependencies
 ├── .env.example          # Environment variables template
+├── data/
+│   └── cycleInfo.json    # Cycle data (keywords, descriptions, etc.)
 ├── routes/
 │   ├── calculate.js      # Calculation endpoints
 │   └── leadCapture.js    # Lead capture endpoints

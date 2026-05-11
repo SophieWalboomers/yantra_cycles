@@ -2,7 +2,7 @@
  * Configuration constants
  */
 
-export const CYCLE_DATA_PATH = '../src/data/cycleInfo.json'
+export const CYCLE_DATA_PATH = '../data/cycleInfo.json'
 
 export const API_RESPONSES = {
   SUCCESS: 'Success',

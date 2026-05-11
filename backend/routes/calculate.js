@@ -1,6 +1,17 @@
 import express from 'express'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { CYCLE_DATA_PATH } from '../config/constants.js'
 
 const router = express.Router()
+
+// Get the directory name for ES modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Path to cycle data
+const cycleDataPath = path.join(__dirname, CYCLE_DATA_PATH)
 
 /**
  * GET /api/calculate/cycle-data
@@ -8,10 +19,19 @@ const router = express.Router()
  */
 router.get('/cycle-data', (req, res) => {
   try {
-    // TODO: Load cycleData from JSON file
-    res.json({ message: 'Cycle data endpoint - to be implemented' })
+    // Load cycle data from JSON file
+    const cycleData = JSON.parse(fs.readFileSync(cycleDataPath, 'utf8'))
+
+    res.json({
+      success: true,
+      data: cycleData,
+    })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    console.error('Error loading cycle data:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Failed to load cycle data',
+    })
   }
 })
 
