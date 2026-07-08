@@ -12,9 +12,9 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary: #f6cf94;
+$primary: oklch(0.92 0.018 130);
 $secondary: #cfd3ff;
-$accent: #cb7b28;
+$accent: oklch(0.34 0.018 40);
 
 $dark: #75471c;
 $dark-page: #381e0c;
@@ -25,6 +25,16 @@ $info: #ffe3bf;
 $warning: #ff7142;
 
 $typography-font-family: 'Merriweather', Georgia, serif;
+
+// Extra palette (from Lovable design system)
+$sand: oklch(0.985 0.008 80);
+$sage-40: oklch(0.92 0.018 130 / 40%);
+$petal: oklch(0.93 0.025 30);
+$mist: oklch(0.93 0.014 250);
+$butter: oklch(0.96 0.035 90);
+$earth-60: oklch(0.34 0.018 40 / 60%);
+$accent-soft: oklch(0.66 0.028 145);
+
 .text-weight-medium {
   font-weight: 400;
 }
