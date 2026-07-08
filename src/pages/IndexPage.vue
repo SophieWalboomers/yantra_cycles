@@ -75,11 +75,11 @@
       </q-card>
     </q-dialog>
     <q-separator class="q-my-lg" />
-    <div class="text-body1 text-italic q-px-sm text-center">
-      “Until you make the unconscious conscious, <br />
-      it will direct your life and you will call it fate.”
-    </div>
-    <div class="q-pb-md">― C.G. Jung</div>
+    <QuoteBlock
+      quote="Until you make the unconscious conscious,
+      it will direct your life and you will call it fate."
+      attribution="Carl Jung"
+    />
     <div class="text-body1 text-center" style="max-width: 80%">
       Understand the energies impacting you right now, to unlock your highest potential and live
       your Dharma.
@@ -202,6 +202,7 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import axios from 'axios'
+import QuoteBlock from 'components/QuoteBlock.vue'
 
 const $q = useQuasar()
 
@@ -313,13 +314,7 @@ watch([birthYear, birthMonth, birthDay], ([year, month, day]) => {
 })
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
 const today = new Date()
-
-// - 1 so it corresponds to Date object indexing (Jan = 0, etc.)
-// const birth_month = computed(() => (birthday.value ? Number(birthday.value.slice(5, 7)) - 1 : null))
-// const birth_day = computed(() => (birthday.value ? Number(birthday.value.slice(8, 10)) : null))
-
 const yearCycle = ref(null)
 const monthCycle = ref(null)
 const dayCycle = ref(null)

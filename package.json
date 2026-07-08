@@ -1,8 +1,8 @@
 {
   "name": "quasar-project",
   "version": "0.0.1",
-  "description": "A web-app to check your Dharma Marga info",
-  "productName": "DharmaMarga",
+  "description": "A web-app to calculate your daily vedic numerology",
+  "productName": "Free Ank Jyotish Calculator - Vedic Numerology",
   "author": "Sophie Walboomers",
   "type": "module",
   "private": true,
@@ -15,7 +15,7 @@
     "postinstall": "quasar prepare"
   },
   "dependencies": {
-    "@fontsource/merriweather": "^5.2.11",
+    "@fontsource/cormorant-garamond": "^5.2.11",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "pinia": "^3.0.1",
