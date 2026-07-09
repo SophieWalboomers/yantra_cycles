@@ -105,21 +105,6 @@
     >
 
     <template v-if="showResult && birthday">
-      <!--<div class="text-body1 q-my-lg">
-        You are currently in a
-        <div>
-          <b>{{ yearCycle }}</b
-          >-cycle year
-        </div>
-        <div>
-          <b>{{ monthCycle }}</b
-          >-cycle month
-        </div>
-        <div>
-          <b>{{ dayCycle }}</b
-          >-cycle day
-        </div>
-      </div>-->
       <q-table
         class="q-mt-lg q-px-sm cycle-table"
         flat
@@ -195,14 +180,16 @@
     <template v-else-if="showResult && !birthday">
       <div class="text-body1 q-my-lg">Please select your birthday first :)</div>
     </template>
+    <q-separator class="q-my-lg" />
   </q-page>
 </template>
 
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
-import axios from 'axios'
+// import axios from 'axios'
 import QuoteBlock from 'components/QuoteBlock.vue'
+import cycleInfo from 'src/assets/cycleInfo.json'
 
 const $q = useQuasar()
 
@@ -215,8 +202,9 @@ const birthMonth = ref(null)
 const birthYear = ref(null)
 
 // Cycle data fetched from API
-const cycleData = ref(null)
-const cycleDataError = ref(null)
+// const cycleData = ref(null)
+// const cycleDataError = ref(null)
+const cycleData = ref(cycleInfo)
 
 const monthOptions = [
   { label: 'Jan', value: 1 },
@@ -268,37 +256,37 @@ onMounted(() => {
   const isReload = performance.getEntriesByType('navigation')[0]?.type === 'reload'
 
   if (isReload || !hasSeenInSession) {
-    showLeadPopup.value = true
+    showLeadPopup.value = false // set to True once the popup is implemented
     sessionStorage.setItem('leadPopupShown', 'true')
   }
 
   // Fetch cycle data from API
-  fetchCycleData()
+  // fetchCycleData()
 })
 
 // Fetch cycle data from backend API
-async function fetchCycleData() {
-  try {
-    cycleDataError.value = null
+// async function fetchCycleData() {
+//   try {
+//     cycleDataError.value = null
 
-    const response = await axios.get('http://localhost:3001/api/calculate/cycle-data')
+//     const response = await axios.get('http://localhost:3001/api/calculate/cycle-data')
 
-    if (response.data.success) {
-      cycleData.value = response.data.data
-    } else {
-      throw new Error('Failed to load cycle data')
-    }
-  } catch (error) {
-    console.error('Error fetching cycle data:', error)
-    cycleDataError.value = error.message
+//     if (response.data.success) {
+//       cycleData.value = response.data.data
+//     } else {
+//       throw new Error('Failed to load cycle data')
+//     }
+//   } catch (error) {
+//     console.error('Error fetching cycle data:', error)
+//     cycleDataError.value = error.message
 
-    // Fallback: show error notification
-    $q.notify({
-      type: 'negative',
-      message: 'Failed to load cycle information.',
-    })
-  }
-}
+//     // Fallback: show error notification
+//     $q.notify({
+//       type: 'negative',
+//       message: 'Failed to load cycle information.',
+//     })
+//   }
+// }
 
 // if birthday changes, save to localStorage (or remove if empty)
 watch(birthday, (val) => {
@@ -341,6 +329,8 @@ function submitLeadForm() {
     return
   }
 
+  // TODO: Implement CAPTCHA verification to prevent bot submissions and spam in the lead capture form
+
   // TODO: Hook API / email service here
 
   $q.notify({
@@ -361,7 +351,53 @@ function pastDatesOnly(date) {
   return selectedDate < today
 }
 
-async function calculate() {
+// use this function once using backend
+
+// async function calculate() {
+//   if (!birthday.value) {
+//     $q.notify({
+//       type: 'negative',
+//       message: 'Please select your birth date before calculating.',
+//     })
+//     return
+//   }
+
+//   if (!cycleData.value) {
+//     $q.notify({
+//       type: 'negative',
+//       message: 'Cycle data is still loading. Please wait a moment.',
+//     })
+//     return
+//   }
+
+// try {
+//   // call backend
+//   const response = await axios.post('http://localhost:3001/api/calculate', {
+//     birthDate: birthday.value,
+//   })
+
+//   if (!response.data.success) {
+//     throw new Error(response.data.error || 'Calculation failed')
+//   }
+
+//   // store backend results
+//   yearCycle.value = response.data.yearCycle
+//   monthCycle.value = response.data.monthCycle
+//   dayCycle.value = response.data.dayCycle
+//   curr_cycle_startdate.value = new Date(response.data.cycleStartDate)
+//   curr_cycle_enddate.value = new Date(response.data.cycleEndDate)
+//   showResult.value = true
+// } catch (error) {
+//   console.error('Failed to calculate cycles:', error)
+//   $q.notify({
+//     type: 'negative',
+//     message: 'Unable to calculate your cycle information. Please try again.',
+//   })
+// }
+// }
+
+// remove this once using backend
+function calculate() {
   if (!birthday.value) {
     $q.notify({
       type: 'negative',
@@ -379,21 +415,23 @@ async function calculate() {
   }
 
   try {
-    // call backend
-    const response = await axios.post('http://localhost:3001/api/calculate', {
-      birthDate: birthday.value,
-    })
+    const [, birthMonth, birthDay] = birthday.value.split('-').map(Number)
 
-    if (!response.data.success) {
-      throw new Error(response.data.error || 'Calculation failed')
-    }
+    let yc = mod9to1(birthMonth + birthDay + today.getFullYear() + 1)
+    const { activeCycle, cycleStartDate, cycleEndDate } = buildCycleRange(
+      yc,
+      today,
+      cycleData.value,
+    )
+    yc = activeCycle
 
-    // store backend results
-    yearCycle.value = response.data.yearCycle
-    monthCycle.value = response.data.monthCycle
-    dayCycle.value = response.data.dayCycle
-    curr_cycle_startdate.value = new Date(response.data.cycleStartDate)
-    curr_cycle_enddate.value = new Date(response.data.cycleEndDate)
+    yearCycle.value = yc
+    monthCycle.value = mod9to1(yc - (7 - (today.getMonth() + 1)))
+    dayCycle.value = mod9to1(monthCycle.value + today.getDate())
+
+    curr_cycle_startdate.value = cycleStartDate
+    curr_cycle_enddate.value = cycleEndDate
+
     showResult.value = true
   } catch (error) {
     console.error('Failed to calculate cycles:', error)
@@ -487,6 +525,53 @@ const cycleRows = computed(() => {
     },
   ]
 })
+
+// remove this once using backend
+function mod9to1(n) {
+  return ((((n - 1) % 9) + 9) % 9) + 1
+}
+
+function parseCycleEndDate(dateString) {
+  const [monthPart, dayPart] = dateString.split(' ')
+  const monthIndex = months.indexOf(monthPart.slice(0, 3))
+  const day = Number(dayPart)
+  return { monthIndex, day }
+}
+
+function buildCycleRange(yearCycle, today, cycleData) {
+  const endDateCycle = cycleData[String(yearCycle)].year_ends
+  const endDateParts = parseCycleEndDate(endDateCycle)
+
+  let activeCycle = yearCycle
+  let cycleStartDate
+  let cycleEndDate
+
+  const todayMonth = today.getMonth()
+  const todayDay = today.getDate()
+
+  if (
+    todayMonth > endDateParts.monthIndex ||
+    (todayMonth === endDateParts.monthIndex && todayDay > endDateParts.day)
+  ) {
+    activeCycle = mod9to1(activeCycle + 1)
+    const previousCycle = mod9to1(activeCycle - 1)
+
+    const previousEnd = parseCycleEndDate(cycleData[String(previousCycle)].year_ends)
+    cycleStartDate = new Date(today.getFullYear(), previousEnd.monthIndex, previousEnd.day + 1)
+
+    const currentEnd = parseCycleEndDate(cycleData[String(activeCycle)].year_ends)
+    cycleEndDate = new Date(today.getFullYear() + 1, currentEnd.monthIndex, currentEnd.day)
+  } else {
+    const previousCycle = mod9to1(activeCycle - 1)
+    const previousEnd = parseCycleEndDate(cycleData[String(previousCycle)].year_ends)
+    cycleStartDate = new Date(today.getFullYear() - 1, previousEnd.monthIndex, previousEnd.day + 1)
+
+    const currentEnd = parseCycleEndDate(cycleData[String(activeCycle)].year_ends)
+    cycleEndDate = new Date(today.getFullYear(), currentEnd.monthIndex, currentEnd.day)
+  }
+
+  return { activeCycle, cycleStartDate, cycleEndDate }
+}
 </script>
 <style scoped>
 .hyphenate {

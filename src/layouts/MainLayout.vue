@@ -25,6 +25,16 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer class="bg-primary text-grey-8">
+      <q-toolbar>
+        <q-toolbar-title class="text-caption absolute-center">
+          © {{ new Date().getFullYear() }} Sophie Walboomers
+        </q-toolbar-title>
+        <!--<q-btn flat dense size="sm" label="Privacy" to="/privacy" />
+        <q-btn flat dense size="sm" label="Terms" to="/terms" />-->
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
 

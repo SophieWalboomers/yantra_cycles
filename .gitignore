@@ -31,3 +31,6 @@ yarn-error.log*
 
 # local .env files
 .env.local*
+TECH_STACK.md
+FEATURE_BACKLOG.md
+SITE_STRUCTURE.md
