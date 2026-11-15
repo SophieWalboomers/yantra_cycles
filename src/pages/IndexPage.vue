@@ -190,6 +190,7 @@ import { useQuasar } from 'quasar'
 // import axios from 'axios'
 import QuoteBlock from 'components/QuoteBlock.vue'
 import cycleInfo from 'src/assets/cycleInfo.json'
+import { calculateCycles } from 'src/utils/calculateCycles'
 
 const $q = useQuasar()
 
@@ -415,22 +416,12 @@ function calculate() {
   }
 
   try {
-    const [, birthMonth, birthDay] = birthday.value.split('-').map(Number)
-
-    let yc = mod9to1(birthMonth + birthDay + today.getFullYear() + 1)
-    const { activeCycle, cycleStartDate, cycleEndDate } = buildCycleRange(
-      yc,
-      today,
-      cycleData.value,
-    )
-    yc = activeCycle
-
-    yearCycle.value = yc
-    monthCycle.value = mod9to1(yc - (7 - (today.getMonth() + 1)))
-    dayCycle.value = mod9to1(monthCycle.value + today.getDate())
-
-    curr_cycle_startdate.value = cycleStartDate
-    curr_cycle_enddate.value = cycleEndDate
+    const cycles = calculateCycles(birthday.value, today, cycleData.value)
+    yearCycle.value = cycles.yearCycle
+    monthCycle.value = cycles.monthCycle
+    dayCycle.value = cycles.dayCycle
+    curr_cycle_startdate.value = cycles.cycleStartDate
+    curr_cycle_enddate.value = cycles.cycleEndDate
 
     showResult.value = true
   } catch (error) {
@@ -526,52 +517,6 @@ const cycleRows = computed(() => {
   ]
 })
 
-// remove this once using backend
-function mod9to1(n) {
-  return ((((n - 1) % 9) + 9) % 9) + 1
-}
-
-function parseCycleEndDate(dateString) {
-  const [monthPart, dayPart] = dateString.split(' ')
-  const monthIndex = months.indexOf(monthPart.slice(0, 3))
-  const day = Number(dayPart)
-  return { monthIndex, day }
-}
-
-function buildCycleRange(yearCycle, today, cycleData) {
-  const endDateCycle = cycleData[String(yearCycle)].year_ends
-  const endDateParts = parseCycleEndDate(endDateCycle)
-
-  let activeCycle = yearCycle
-  let cycleStartDate
-  let cycleEndDate
-
-  const todayMonth = today.getMonth()
-  const todayDay = today.getDate()
-
-  if (
-    todayMonth > endDateParts.monthIndex ||
-    (todayMonth === endDateParts.monthIndex && todayDay > endDateParts.day)
-  ) {
-    activeCycle = mod9to1(activeCycle + 1)
-    const previousCycle = mod9to1(activeCycle - 1)
-
-    const previousEnd = parseCycleEndDate(cycleData[String(previousCycle)].year_ends)
-    cycleStartDate = new Date(today.getFullYear(), previousEnd.monthIndex, previousEnd.day + 1)
-
-    const currentEnd = parseCycleEndDate(cycleData[String(activeCycle)].year_ends)
-    cycleEndDate = new Date(today.getFullYear() + 1, currentEnd.monthIndex, currentEnd.day)
-  } else {
-    const previousCycle = mod9to1(activeCycle - 1)
-    const previousEnd = parseCycleEndDate(cycleData[String(previousCycle)].year_ends)
-    cycleStartDate = new Date(today.getFullYear() - 1, previousEnd.monthIndex, previousEnd.day + 1)
-
-    const currentEnd = parseCycleEndDate(cycleData[String(activeCycle)].year_ends)
-    cycleEndDate = new Date(today.getFullYear(), currentEnd.monthIndex, currentEnd.day)
-  }
-
-  return { activeCycle, cycleStartDate, cycleEndDate }
-}
 </script>
 <style scoped>
 .hyphenate {
